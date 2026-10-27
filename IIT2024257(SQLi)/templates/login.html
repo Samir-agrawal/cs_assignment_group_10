@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQLi Lab | IIIT Allahabad — Cyber Security</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0b0f17;
+    --bg-soft: #101827;
+    --panel: #141d2e;
+    --panel-2: #0f1724;
+    --border: #243049;
+    --border-soft: #1b2638;
+    --text: #e8edf6;
+    --text-dim: #93a1bd;
+    --text-faint: #5f6f8f;
+    --accent: #6c8bff;
+    --accent-2: #8f6cff;
+    --danger: #ff5d7a;
+    --danger-bg: #2a1420;
+    --success: #35d399;
+    --success-bg: #0f2a22;
+    --warn: #ffb648;
+    --warn-bg: #2a2110;
+    --radius: 14px;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family:'Inter',sans-serif;
+    background:
+      radial-gradient(1100px 600px at 85% -10%, rgba(111,140,255,0.12), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(143,108,255,0.10), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    min-height:100%;
+    display:flex;
+    flex-direction:column;
+  }
+  .topbar{
+    border-bottom:1px solid var(--border-soft);
+    background:rgba(11,15,23,0.85);
+    backdrop-filter:blur(8px);
+    position:sticky;
+    top:0;
+    z-index:20;
+  }
+  .topbar-inner{
+    max-width:1180px;
+    margin:0 auto;
+    padding:14px 24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .brand-mark{
+    width:34px;height:34px;border-radius:9px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:15px;color:#0b0f17;
+    flex-shrink:0;
+  }
+  .brand-text h1{font-size:14.5px;margin:0;font-weight:700;letter-spacing:0.2px;}
+  .brand-text p{font-size:11.5px;margin:1px 0 0;color:var(--text-faint);}
+  .course-tag{
+    font-family:var(--mono);
+    font-size:11.5px;
+    color:var(--text-dim);
+    background:var(--panel-2);
+    border:1px solid var(--border-soft);
+    padding:6px 10px;
+    border-radius:8px;
+  }
+
+  .shell{
+    max-width:1180px;
+    width:100%;
+    margin:0 auto;
+    padding:40px 24px 64px;
+    flex:1;
+  }
+
+  .hero{
+    margin-bottom:28px;
+  }
+  .hero .kicker{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;
+    color:var(--accent);
+    background:rgba(108,139,255,0.10);
+    border:1px solid rgba(108,139,255,0.25);
+    padding:5px 11px;border-radius:999px;
+    margin-bottom:14px;
+  }
+  .hero h2{
+    font-size:28px;margin:0 0 8px;font-weight:800;letter-spacing:-0.02em;
+  }
+  .hero p{
+    color:var(--text-dim);font-size:14.5px;max-width:680px;line-height:1.6;margin:0;
+  }
+
+  .mode-switch{
+    display:flex;
+    gap:10px;
+    margin-top:26px;
+    background:var(--panel-2);
+    border:1px solid var(--border-soft);
+    padding:6px;
+    border-radius:12px;
+    width:fit-content;
+  }
+  .mode-switch a{
+    text-decoration:none;
+    padding:10px 18px;
+    border-radius:8px;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--text-dim);
+    transition:all .15s ease;
+    display:flex;align-items:center;gap:8px;
+  }
+  .mode-switch a .dot{width:7px;height:7px;border-radius:50%;background:var(--text-faint);}
+  .mode-switch a.active{
+    background:var(--panel);
+    color:var(--text);
+    box-shadow:0 1px 0 rgba(255,255,255,0.03) inset, 0 4px 14px rgba(0,0,0,0.25);
+  }
+  .mode-switch a.active.vuln{color:var(--danger);}
+  .mode-switch a.active.vuln .dot{background:var(--danger);box-shadow:0 0 0 3px rgba(255,93,122,0.15);}
+  .mode-switch a.active.secure{color:var(--success);}
+  .mode-switch a.active.secure .dot{background:var(--success);box-shadow:0 0 0 3px rgba(53,211,153,0.15);}
+
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap:24px;
+    margin-top:28px;
+    align-items:start;
+  }
+  @media (max-width: 920px){ .grid{grid-template-columns:1fr;} }
+
+  .panel{
+    background:linear-gradient(180deg, var(--panel), var(--panel-2));
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:26px;
+    position:relative;
+    overflow:hidden;
+  }
+  .panel::before{
+    content:"";
+    position:absolute;top:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  }
+  .panel.vuln::before{background:linear-gradient(90deg,#ff5d7a,#ff8a5c);}
+  .panel.secure::before{background:linear-gradient(90deg,#35d399,#35b4d3);}
+
+  .panel-header{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:20px;
+  }
+  .panel-header h3{margin:0;font-size:15.5px;font-weight:700;}
+  .badge{
+    font-family:var(--mono);
+    font-size:11px;font-weight:600;
+    padding:4px 9px;border-radius:6px;
+    letter-spacing:0.02em;
+  }
+  .badge.vuln{background:var(--danger-bg);color:var(--danger);border:1px solid rgba(255,93,122,0.3);}
+  .badge.secure{background:var(--success-bg);color:var(--success);border:1px solid rgba(53,211,153,0.3);}
+
+  label{
+    display:block;font-size:12.5px;font-weight:600;color:var(--text-dim);
+    margin-bottom:7px;margin-top:16px;
+  }
+  label:first-of-type{margin-top:0;}
+  input[type=text], input[type=password]{
+    width:100%;
+    background:var(--bg-soft);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:12px 14px;
+    border-radius:9px;
+    font-size:14px;
+    font-family:var(--mono);
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  input:focus{
+    outline:none;
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px rgba(108,139,255,0.15);
+  }
+  .hint{font-size:11.5px;color:var(--text-faint);margin-top:6px;line-height:1.5;}
+  .hint code{
+    background:var(--panel-2);
+    border:1px solid var(--border-soft);
+    padding:1px 5px;border-radius:4px;
+    color:var(--text-dim);
+    font-family:var(--mono);
+  }
+
+  .payload-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+  .chip{
+    font-family:var(--mono);font-size:11.5px;
+    background:var(--panel-2);
+    border:1px solid var(--border-soft);
+    color:var(--text-dim);
+    padding:6px 10px;border-radius:7px;
+    cursor:pointer;
+    transition:border-color .15s ease,color .15s ease;
+  }
+  .chip:hover{border-color:var(--accent);color:var(--text);}
+
+  button.submit-btn{
+    width:100%;
+    margin-top:22px;
+    padding:13px 16px;
+    border:none;border-radius:9px;
+    font-size:14px;font-weight:700;
+    cursor:pointer;
+    color:#0b0f17;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    transition:transform .1s ease, filter .15s ease;
+  }
+  button.submit-btn:hover{filter:brightness(1.08);}
+  button.submit-btn:active{transform:translateY(1px);}
+  .panel.vuln button.submit-btn{background:linear-gradient(135deg,#ff5d7a,#ff8a5c);}
+  .panel.secure button.submit-btn{background:linear-gradient(135deg,#35d399,#35b4d3);}
+
+  .reset-link{
+    display:inline-block;margin-top:14px;font-size:12px;color:var(--text-faint);text-decoration:none;
+  }
+  .reset-link:hover{color:var(--text-dim);}
+
+  .result-panel{display:flex;flex-direction:column;gap:16px;}
+  .result-card{
+    border-radius:10px;
+    padding:16px 18px;
+    border:1px solid var(--border-soft);
+    background:var(--panel-2);
+  }
+  .result-card h4{
+    margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;
+    color:var(--text-faint);font-weight:700;
+  }
+  .status-line{
+    display:flex;align-items:center;gap:10px;
+    font-weight:700;font-size:14.5px;
+    padding:12px 14px;border-radius:9px;
+  }
+  .status-line.success{background:var(--success-bg);color:var(--success);border:1px solid rgba(53,211,153,0.3);}
+  .status-line.fail{background:var(--danger-bg);color:var(--danger);border:1px solid rgba(255,93,122,0.3);}
+  .status-line .icon{font-size:17px;}
+
+  .kv{display:grid;grid-template-columns:90px 1fr;gap:6px 10px;font-size:13px;margin-top:10px;}
+  .kv .k{color:var(--text-faint);}
+  .kv .v{font-family:var(--mono);color:var(--text);}
+
+  pre.query-box{
+    margin:0;
+    background:#070a10;
+    border:1px solid var(--border-soft);
+    border-radius:9px;
+    padding:14px 16px;
+    font-family:var(--mono);
+    font-size:12.5px;
+    line-height:1.7;
+    color:#9fd6ff;
+    overflow-x:auto;
+    white-space:pre-wrap;
+    word-break:break-word;
+  }
+  pre.query-box .inj{color:var(--danger);font-weight:600;}
+
+  .empty-state{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;
+    padding:50px 20px;
+    color:var(--text-faint);
+    gap:10px;
+  }
+  .empty-state .glyph{font-size:30px;opacity:0.5;}
+  .empty-state p{font-size:13px;max-width:280px;margin:0;line-height:1.6;}
+
+  .notes-strip{
+    margin-top:28px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+  }
+  @media (max-width:920px){ .notes-strip{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:560px){ .notes-strip{grid-template-columns:1fr;} }
+  .note-card{
+    background:var(--panel-2);
+    border:1px solid var(--border-soft);
+    border-radius:11px;
+    padding:16px;
+  }
+  .note-card .n-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+  .note-card .n-num{
+    width:20px;height:20px;border-radius:6px;background:var(--border-soft);
+    display:flex;align-items:center;justify-content:center;
+    font-size:10.5px;font-weight:700;color:var(--text-dim);
+  }
+  .note-card h5{margin:0;font-size:12.5px;font-weight:700;}
+  .note-card p{margin:0;font-size:12px;color:var(--text-dim);line-height:1.55;}
+
+  footer{
+    text-align:center;
+    padding:22px 24px 30px;
+    font-size:11.5px;
+    color:var(--text-faint);
+    border-top:1px solid var(--border-soft);
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-mark">λ</div>
+      <div class="brand-text">
+        <h1>SQL Injection Lab</h1>
+        <p>Authentication Bypass — Variant 1</p>
+      </div>
+    </div>
+    <div class="course-tag">IT-30001 · Cyber Security · IIIT Allahabad</div>
+  </div>
+</div>
+
+<div class="shell">
+
+  <div class="hero">
+    <span class="kicker">● Live demonstration</span>
+    <h2>SQLi Authentication Bypass &amp; Parameterized-Query Mitigation</h2>
+    <p>
+      This lab exposes the same login feature in two modes. In
+      <strong style="color:var(--danger)">Vulnerable</strong> mode, the query is built by
+      string-concatenating user input directly into SQL text. In
+      <strong style="color:var(--success)">Secure</strong> mode, the identical login logic uses
+      parameterized queries (bound placeholders), so the same attack payload is neutralized.
+    </p>
+
+    <div class="mode-switch">
+      <a href="{{ url_for('login', mode='vulnerable') }}" class="{{ 'active vuln' if mode=='vulnerable' else '' }}">
+        <span class="dot"></span> Vulnerable mode
+      </a>
+      <a href="{{ url_for('login', mode='secure') }}" class="{{ 'active secure' if mode=='secure' else '' }}">
+        <span class="dot"></span> Secure mode (parameterized)
+      </a>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- LEFT: Login form -->
+    <div class="panel {{ 'vuln' if mode=='vulnerable' else 'secure' }}">
+      <div class="panel-header">
+        <h3>Login — {{ 'Vulnerable implementation' if mode=='vulnerable' else 'Secure implementation' }}</h3>
+        <span class="badge {{ 'vuln' if mode=='vulnerable' else 'secure' }}">
+          {{ 'f-string concat' if mode=='vulnerable' else 'param. query' }}
+        </span>
+      </div>
+
+      <form method="POST" action="{{ url_for('login', mode=mode) }}">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" value="{{ username }}" autocomplete="off" placeholder="e.g. admin">
+
+        <label for="password">Password</label>
+        <input type="text" id="password" name="password" value="{{ password }}" autocomplete="off" placeholder="e.g. password123">
+
+        {% if mode == 'vulnerable' %}
+        <div class="hint">
+          Try the classic bypass payload as the username (password can be anything):
+        </div>
+        <div class="payload-chips">
+          <span class="chip" onclick="fillPayload(&quot;admin' --&quot;, 'x')">admin' --</span>
+          <span class="chip" onclick="fillPayload(&quot;' OR '1'='1' --&quot;, 'x')">' OR '1'='1' --</span>
+        </div>
+        {% else %}
+        <div class="hint">
+          Same payloads, now harmless — try <code>admin' --</code> again and it will simply fail to match any row.
+        </div>
+        <div class="payload-chips">
+          <span class="chip" onclick="fillPayload(&quot;admin' --&quot;, 'x')">admin' --</span>
+          <span class="chip" onclick="fillPayload(&quot;' OR '1'='1' --&quot;, 'x')">' OR '1'='1' --</span>
+        </div>
+        {% endif %}
+
+        <button type="submit" class="submit-btn">Sign in</button>
+      </form>
+
+      <a href="{{ url_for('reset_db') }}" class="reset-link">↺ reset demo database</a>
+    </div>
+
+    <!-- RIGHT: Result / query trace -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3>Execution trace</h3>
+      </div>
+
+      {% if result %}
+        <div class="result-panel">
+          {% if result.success %}
+            <div class="status-line success"><span class="icon">✔</span> Authentication succeeded — logged in as "{{ result.username }}" (role: {{ result.role }})</div>
+          {% else %}
+            <div class="status-line fail"><span class="icon">✖</span> Authentication failed — no matching row returned</div>
+          {% endif %}
+
+          {% if result.success %}
+          <div class="result-card">
+            <h4>Returned row</h4>
+            <div class="kv">
+              <div class="k">id</div><div class="v">{{ result.id }}</div>
+              <div class="k">username</div><div class="v">{{ result.username }}</div>
+              <div class="k">role</div><div class="v">{{ result.role }}</div>
+            </div>
+          </div>
+          {% endif %}
+
+          <div class="result-card">
+            <h4>{{ 'SQL text sent to the database (concatenated)' if mode=='vulnerable' else 'SQL template + bound parameters' }}</h4>
+            <pre class="query-box">{{ executed_query }}</pre>
+          </div>
+
+          {% if error %}
+          <div class="result-card">
+            <h4>Database error</h4>
+            <pre class="query-box">{{ error }}</pre>
+          </div>
+          {% endif %}
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <div class="glyph">⌁</div>
+          <p>Submit the form on the left to see the exact query the server runs, and whether the payload bypasses authentication.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="notes-strip">
+    <div class="note-card">
+      <div class="n-head"><span class="n-num">1</span><h5>Root cause</h5></div>
+      <p>User-controlled input is concatenated directly into SQL statement text, so attacker data can be interpreted as SQL syntax.</p>
+    </div>
+    <div class="note-card">
+      <div class="n-head"><span class="n-num">2</span><h5>Exploit</h5></div>
+      <p>Username <code style="font-family:var(--mono);">admin' --</code> turns the rest of the WHERE clause into a SQL comment, skipping the password check.</p>
+    </div>
+    <div class="note-card">
+      <div class="n-head"><span class="n-num">3</span><h5>Mitigation implemented</h5></div>
+      <p>Parameterized queries: SQL is compiled before values are bound, so input is always treated as data, never as code.</p>
+    </div>
+    <div class="note-card">
+      <div class="n-head"><span class="n-num">4</span><h5>Other mitigations (theory)</h5></div>
+      <p>Input allow-listing, least-privilege DB accounts, and generic error messages that don't leak query/schema detail.</p>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  IT-30001 Cyber Security · Assignment: Web Server Security · For authorised classroom demonstration only — do not deploy publicly.
+</footer>
+
+<script>
+function fillPayload(u, p){
+  document.getElementById('username').value = u;
+  document.getElementById('password').value = p;
+}
+</script>
+
+</body>
+</html>
