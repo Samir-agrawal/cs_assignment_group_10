@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Contact — Harborline Hosting{% endblock %}
+{% block content %}
+
+<section>
+  <div class="wrap">
+    <h1>Get in touch</h1>
+    <p>Questions about a plan, a migration, or anything else — send us a note and someone from the team will reply directly.</p>
+
+    {% if submitted %}
+    <div class="confirm-banner">Thanks — your message has been received. We'll get back to you within one business day.</div>
+    {% endif %}
+
+    <form class="form-panel" method="post">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="message">Message</label>
+      <textarea id="message" name="message" required></textarea>
+
+      <button type="submit" class="btn">Send message</button>
+    </form>
+  </div>
+</section>
+
+{% endblock %}

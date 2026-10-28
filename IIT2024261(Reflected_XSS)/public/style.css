@@ -1,0 +1,273 @@
+/* ==========================================================================
+   Cyber Security Lab - Reflected XSS Stylesheet
+   Clean, modern, and minimal styling (Standard CSS)
+   ========================================================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: #f1f5f9;
+  color: #1e293b;
+  line-height: 1.6;
+  padding: 30px 15px;
+}
+
+.container {
+  max-width: 680px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+/* Header */
+.header {
+  padding: 20px 24px;
+  background: #0f172a;
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.header-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.header-sub {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+/* Navigation Tabs */
+.nav-tabs {
+  display: flex;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 8px 16px;
+  gap: 8px;
+}
+
+.nav-link {
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 6px;
+  color: #64748b;
+  transition: all 0.2s;
+}
+
+.nav-link:hover {
+  color: #0f172a;
+  background: #e2e8f0;
+}
+
+.nav-link.active-home {
+  background: #0f172a;
+  color: #ffffff;
+}
+
+.nav-link.active-vuln {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.nav-link.active-secure {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+/* Body Content */
+.body-content {
+  padding: 24px;
+}
+
+.section-title {
+  font-size: 1.35rem;
+  margin-bottom: 6px;
+}
+
+.section-desc {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+
+.badge-vuln {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.badge-secure {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.badge-home {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+/* Form & Inputs */
+.form-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #334155;
+  display: block;
+}
+
+.input-group {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+input[type="text"] {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  outline: none;
+  font-family: inherit;
+}
+
+input[type="text"]:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+button.btn {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #ffffff;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+button.btn:hover {
+  opacity: 0.9;
+}
+
+.btn-vuln {
+  background: #ef4444;
+}
+
+.btn-secure {
+  background: #10b981;
+}
+
+.btn-home {
+  background: #3b82f6;
+}
+
+/* Quick Fill Chips */
+.payload-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.payload-chip {
+  display: inline-block;
+  background: #f1f5f9;
+  border: 1px dashed #cbd5e1;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  color: #475569;
+  cursor: pointer;
+  font-family: monospace;
+  transition: all 0.2s;
+}
+
+.payload-chip:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+/* Result Box */
+.result-box {
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.result-vuln {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-left: 4px solid #ef4444;
+}
+
+.result-secure {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-left: 4px solid #10b981;
+}
+
+.result-header-vuln {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #b91c1c;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.result-header-secure {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #15803d;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+/* Code Inspector */
+.code-box {
+  margin-top: 24px;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-family: Consolas, Monaco, monospace;
+  font-size: 0.82rem;
+  color: #334155;
+  line-height: 1.5;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Services — Harborline Hosting{% endblock %}
+{% block content %}
+
+<section>
+  <div class="wrap">
+    <h1>Plans</h1>
+    <p>Every plan includes nightly backups, a free SSL certificate, and basic uptime monitoring. Move between plans at any time — we prorate the difference.</p>
+
+    <table class="plan-table">
+      <thead>
+        <tr>
+          <th>&nbsp;</th>
+          <th>Starter</th>
+          <th>Growth</th>
+          <th>Dedicated</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Storage</td>
+          <td>10 GB SSD</td>
+          <td>50 GB SSD</td>
+          <td>250 GB SSD</td>
+        </tr>
+        <tr>
+          <td>Sites</td>
+          <td>1</td>
+          <td>Up to 10</td>
+          <td>Unlimited</td>
+        </tr>
+        <tr>
+          <td>Bandwidth</td>
+          <td>100 GB / mo</td>
+          <td>1 TB / mo</td>
+          <td>Unmetered</td>
+        </tr>
+        <tr>
+          <td>Support response</td>
+          <td>Next business day</td>
+          <td>Within 8 hours</td>
+          <td>Within 2 hours</td>
+        </tr>
+        <tr>
+          <td>Free migration</td>
+          <td>—</td>
+          <td>Included</td>
+          <td>Included</td>
+        </tr>
+        <tr>
+          <td>Price</td>
+          <td class="price">$7 / mo</td>
+          <td class="price">$24 / mo</td>
+          <td class="price">$89 / mo</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 style="margin-top:48px;">Add-ons</h2>
+    <p>Domain registration starts at $11/year. Extended backup retention (90 days instead of 14) is $4/month. Managed WordPress updates are $6/month per site.</p>
+  </div>
+</section>
+
+{% endblock %}

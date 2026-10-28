@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Connectivity check — Harborline Hosting{% endblock %}
+{% block content %}
+
+<section>
+  <div class="wrap">
+    <h1>Server connectivity check <span class="badge fresh">refreshed</span></h1>
+    <p>Enter a hostname or IP address and we'll ping it from our network to help confirm it's reachable. Useful after a migration or a DNS change.</p>
+
+    <div class="tool-panel">
+      <form method="post">
+        <div class="field-row">
+          <div>
+            <label for="target">Hostname or IP address</label>
+            <input type="text" id="target" name="target" value="{{ target }}" placeholder="e.g. 198.51.100.24 or example.com" autocomplete="off">
+          </div>
+          <button type="submit" class="btn">Run check</button>
+        </div>
+      </form>
+
+      {% if error %}
+      <div class="notice-error">{{ error }}</div>
+      {% endif %}
+
+      {% if output is not none %}
+      <div class="result-label">Result</div>
+      <pre class="terminal">{{ output }}</pre>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% endblock %}

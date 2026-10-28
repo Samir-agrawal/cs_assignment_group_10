@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab Overview | IIIT Allahabad XSS Lab</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div>
+        <div class="header-title">🛡️ Cyber Security Lab</div>
+        <div class="header-sub">IIIT Allahabad • Reflected XSS Demo • By Ashish (IIT2024261, Group 11)</div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <a href="/" class="nav-link active-home">🏠 Home</a>
+      <a href="/vulnerable" class="nav-link">⚠️ Vulnerable Route</a>
+      <a href="/secure" class="nav-link">🛡️ Secured Route</a>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="body-content">
+      <span class="badge badge-home">Cyber Security Lab</span>
+      
+      <h2 class="section-title">Reflected Cross-Site Scripting (XSS)</h2>
+      <p class="section-desc">
+        Welcome to the Web Server Security demonstration for IIIT Allahabad. This lab demonstrates how unescaped user input causes reflected XSS, and how context-aware output encoding prevents it.
+      </p>
+
+      <div style="display: grid; gap: 12px; margin-bottom: 24px;">
+        <a href="/vulnerable" style="text-decoration: none; padding: 14px; border: 1px solid #fecaca; background: #fef2f2; border-radius: 8px; display: block; color: #991b1b;">
+          <strong>⚠️ 1. Vulnerable Route (/vulnerable)</strong><br>
+          <small style="color: #b91c1c;">Directly reflects input into the HTML response without escaping. Injected scripts execute in the browser.</small>
+        </a>
+
+        <a href="/secure" style="text-decoration: none; padding: 14px; border: 1px solid #bbf7d0; background: #f0fdf4; border-radius: 8px; display: block; color: #166534;">
+          <strong>🛡️ 2. Secured Route (/secure)</strong><br>
+          <small style="color: #15803d;">Sanitizes input with HTML entity encoding. Injected scripts are safely displayed as plain text.</small>
+        </a>
+      </div>
+
+      <div style="padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+        <strong style="font-size: 0.85rem; color: #475569;">Recommended Harmless Test Payload:</strong><br>
+        <code style="color: #dc2626; font-size: 0.9rem;">&lt;script&gt;alert('XSS')&lt;/script&gt;</code>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Cyber Security Lab • Strictly Localhost Educational Testing
+  </div>
+
+  <script src="/script.js"></script>
+</body>
+</html>

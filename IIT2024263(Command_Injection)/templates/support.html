@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Support — Harborline Hosting{% endblock %}
+{% block content %}
+
+<section>
+  <div class="wrap">
+    <h1>Support</h1>
+    <p>Common questions and a couple of self-serve tools. For anything else, reach out through the contact page and we'll pick it up directly.</p>
+
+    <div class="support-list">
+      <div class="support-item">
+        <h3>Billing and invoices</h3>
+        <p>Invoices go out on the first of each month to the email on file. You can update billing details or download past invoices from the account area once you're logged in.</p>
+      </div>
+
+      <div class="support-item">
+        <h3>Pointing a domain at Harborline</h3>
+        <p>Update your domain's A record to the IP address in your welcome email, and the CNAME for "www" to the hostname we provided. Changes usually propagate within a few hours.</p>
+      </div>
+
+      <div class="support-item">
+        <h3>Server connectivity check <span class="badge">classic</span></h3>
+        <p>Enter a hostname or IP address and we'll check reachability from our network. This is the original version of the tool.</p>
+        <a href="{{ url_for('diagnostics_legacy') }}" class="btn btn-secondary">Open connectivity check</a>
+        <div class="deprecation-note">We're retiring this version — if you're setting it up fresh, use the refreshed connectivity check below instead.</div>
+      </div>
+
+      <div class="support-item">
+        <h3>Server connectivity check <span class="badge fresh">refreshed</span></h3>
+        <p>Same tool, rebuilt on our current platform. We recommend this version going forward.</p>
+        <a href="{{ url_for('diagnostics_v2') }}" class="btn btn-secondary">Open connectivity check</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

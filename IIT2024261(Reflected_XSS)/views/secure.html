@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secured Route | IIIT Allahabad XSS Lab</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div>
+        <div class="header-title">🛡️ Cyber Security Lab</div>
+        <div class="header-sub">IIIT Allahabad • Reflected XSS Demo • By Ashish (IIT2024261, Group 11)</div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <a href="/" class="nav-link">🏠 Home</a>
+      <a href="/vulnerable" class="nav-link">⚠️ Vulnerable Route</a>
+      <a href="/secure" class="nav-link active-secure">🛡️ Secured Route</a>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="body-content">
+      <span class="badge badge-secure">🛡️ Mode: Secured (HTML Escaped)</span>
+
+      <h2 class="section-title">Secured Search Reflector</h2>
+      <p class="section-desc">
+        Input submitted below is sanitized using HTML entity encoding before rendering.
+      </p>
+
+      <!-- Form -->
+      <form method="GET" action="/secure">
+        <label class="form-label" for="testInput">Enter Search Term or Test Payload:</label>
+        <div class="input-group">
+          <input 
+            type="text" 
+            id="testInput"
+            name="name" 
+            placeholder="e.g. <script>alert('XSS')</script>"
+            value="{{INPUT_VALUE}}"
+          >
+          <button type="submit" class="btn btn-secure">Reflect Safely</button>
+        </div>
+
+        <div class="payload-chips">
+          <span class="payload-chip" onclick="fillInput('&lt;script&gt;alert(\'XSS\')&lt;/script&gt;')">
+            ⚡ 1. Alert Popup
+          </span>
+          <span class="payload-chip" onclick="fillInput('&lt;script&gt;document.body.style.backgroundColor=\'#fef08a\';&lt;/script&gt;')">
+            🎨 2. Change Background Color
+          </span>
+          <span class="payload-chip" onclick="fillInput('&lt;img src=&quot;x&quot; onerror=&quot;alert(\'Image XSS\')&quot;&gt;')">
+            🖼️ 3. Image OnError
+          </span>
+          <span class="payload-chip" onclick="fillInput('Cyber Security Lab')">
+            📝 4. Normal Text
+          </span>
+        </div>
+      </form>
+
+      <!-- Reflected Output Box -->
+      <div class="result-box result-secure">
+        <div class="result-header-secure">
+          Sanitized Server Output:
+        </div>
+        {{OUTPUT_CONTENT}}
+      </div>
+
+      <!-- Code Inspector -->
+      <div class="code-box">
+        <strong>Mitigation Code in server.js:</strong><br>
+        <code>const resultHtml = `&lt;p&gt;Search result: ${escapeHtml(name)}&lt;/p&gt;`;</code><br>
+        <small style="color: #64748b;">Characters like &lt; and &gt; are converted to &amp;lt; and &amp;gt; (literal text).</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Cyber Security Lab • Strictly Localhost Educational Testing
+  </div>
+
+  <script src="/script.js"></script>
+</body>
+</html>
